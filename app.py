@@ -9,7 +9,7 @@ app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-VIRUSTOTAL_API_KEY = "f5f439718c900ca3b5e9efad27196385a31a4243900d348cde425da4d23905aa"  # Replace with your VirusTotal API key
+VIRUSTOTAL_API_KEY = "f5f439718c900ca3b5e9efad27196385a31a4243900d348cde425da4d23905aa"  # Replace with your key
 
 def get_md5(file_path):
     hash_md5 = hashlib.md5()
@@ -36,7 +36,7 @@ def scan_url(url_to_scan):
     return f"<p class='error'>❌ URL Scan Error: {response.status_code} – {response.text}</p>"
 
 def get_report(scan_id, is_url=False):
-    time.sleep(10)  # allow time for VirusTotal to analyze
+    time.sleep(10)  # Give time for VirusTotal to process
     headers = {"x-apikey": VIRUSTOTAL_API_KEY}
     endpoint = f"https://www.virustotal.com/api/v3/{'urls' if is_url else 'analyses'}/{scan_id}"
     response = requests.get(endpoint, headers=headers)
@@ -83,4 +83,6 @@ def index():
     return render_template("index.html", result=result)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5050))  # default to 5050 if not specified
+    app.run(host='0.0.0.0', port=port)
+
